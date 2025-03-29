@@ -133,7 +133,7 @@ This summarizer achieves a **high BERTScore**, ensuring high-quality summaries t
 -Optimized resource utilization – Reduction in the computational overheads for broader accessibility 
 
 
-📌 **[View the Demo Video](https://1drv.ms/p/c/7764bb9a4a1c2229/EXvPElBrVndDjBWx95XmiuIBAeLLp3x7sqsfUomJjDWvXQ?e=SRraXh)** 
+📌 **[View the Demo Video](https://1drv.ms/v/c/8c8713fbccf62dfa/EU1o_wQXgHROk4tUuSljYG8BFOLx8ssCPKZNLi41-EZK2w?e=JPwaSU)** 
 
 ## Contributing
 1. Fork the repository.
