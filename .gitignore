@@ -1,0 +1,24 @@
+
+---
+
+### `.gitignore`
+```txt
+# Ignore Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+env/
+
+# Ignore log files
+*.log
+
+# Ignore model and NLP downloads
+nltk_data/
+spacy_data/
+
+# Ignore generated output files
+summary_output.*
