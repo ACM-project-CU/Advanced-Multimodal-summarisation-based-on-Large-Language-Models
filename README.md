@@ -132,6 +132,9 @@ This summarizer achieves a **high BERTScore**, ensuring high-quality summaries t
 
 -Optimized resource utilization – Reduction in the computational overheads for broader accessibility 
 
+
+📌 **[View the Demo Video](https://1drv.ms/p/c/7764bb9a4a1c2229/EXvPElBrVndDjBWx95XmiuIBAeLLp3x7sqsfUomJjDWvXQ?e=SRraXh)** 
+
 ## Contributing
 1. Fork the repository.
 2. Create a feature branch (`git checkout -b feature-branch`).
