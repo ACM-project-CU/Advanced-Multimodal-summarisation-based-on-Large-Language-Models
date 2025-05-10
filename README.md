@@ -187,6 +187,8 @@ Each format is optimized for readability and proper formatting of the summary co
 
 The `check_score.py` file implements a comprehensive evaluation system for assessing summary quality. Here's how it works:
 
+[👉 Click here to watch how scores are being checked](https://1drv.ms/v/c/8c8713fbccf62dfa/ETJHfcjdCPBOqNXHtxBatrgB2sYPW3CvKWrMOMGYwDtY_g?e=gkhYoR)
+
 ### Core Evaluation Metrics
 
 #### 1. ROUGE Scores
@@ -305,7 +307,7 @@ The `run_video_summary.py` script demonstrates this functionality with a sample 
 
 ## Demo Video
 
-A demonstration video showing the system in action is available at [Google Drive Link - Coming Soon].
+[▶️ Click here to watch the full demo video](https://1drv.ms/v/c/8c8713fbccf62dfa/EU177sDoOpZHisuKQq0OE0ABguy8sEP_cSLvyGb5kes1GA?e=5OYyG7)
 
 ## Installation
 
