@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summarization Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .header-container {
+            background-color: #343a40;
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+        .summary-text {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border-left: 5px solid #0d6efd;
+        }
+        .entity-badge {
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .sentiment-indicator {
+            height: 10px;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .sentiment-positive {
+            background-color: #28a745;
+        }
+        .sentiment-negative {
+            background-color: #dc3545;
+        }
+        .sentiment-neutral {
+            background-color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container text-center">
+            <h1>Summarization Results</h1>
+            <p class="lead">Advanced Text Analysis and Summary</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <!-- Summary Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Summary</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="summary-text mb-4">
+                            <p>{{ result.summary }}</p>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5>Download Summary:</h5>
+                                <div class="btn-group">
+                                    <a href="/download/{{ session_id }}/txt" class="btn btn-outline-primary">Text</a>
+                                    <a href="/download/{{ session_id }}/json" class="btn btn-outline-primary">JSON</a>
+                                    <a href="/download/{{ session_id }}/pdf" class="btn btn-outline-primary">PDF</a>
+                                    <a href="/download/{{ session_id }}/docx" class="btn btn-outline-primary">DOCX</a>
+                                </div>
+                            </div>
+                            <a href="/" class="btn btn-primary">New Summary</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0">Text Analysis</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Keywords -->
+                            <div class="col-md-6 mb-4">
+                                <h4>Key Phrases</h4>
+                                <div>
+                                    {% for keyword in result.analysis.keywords %}
+                                        <span class="badge bg-info text-dark entity-badge">{{ keyword }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Entities -->
+                            <div class="col-md-6 mb-4">
+                                <h4>Named Entities</h4>
+                                <div>
+                                    {% for entity in result.analysis.entities %}
+                                        <span class="badge bg-secondary entity-badge" title="{{ entity[1] }}">{{ entity[0] }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Sentiment -->
+                            <div class="col-md-4 mb-4">
+                                <h4>Sentiment Analysis</h4>
+                                <p>
+                                    {% if result.analysis.sentiment > 0.05 %}
+                                        <strong class="text-success">Positive</strong> ({{ "%.2f"|format(result.analysis.sentiment) }})
+                                    {% elif result.analysis.sentiment < -0.05 %}
+                                        <strong class="text-danger">Negative</strong> ({{ "%.2f"|format(result.analysis.sentiment) }})
+                                    {% else %}
+                                        <strong class="text-secondary">Neutral</strong> ({{ "%.2f"|format(result.analysis.sentiment) }})
+                                    {% endif %}
+                                </p>
+                                <div class="progress">
+                                    {% if result.analysis.sentiment > 0 %}
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ (result.analysis.sentiment + 1) * 50 }}%"></div>
+                                    {% else %}
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ (1 - result.analysis.sentiment) * 50 }}%"></div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- Topic -->
+                            <div class="col-md-4 mb-4">
+                                <h4>Primary Topic</h4>
+                                <p><span class="badge bg-primary">{{ result.analysis.topic }}</span></p>
+                            </div>
+
+                            <!-- Readability -->
+                            <div class="col-md-4 mb-4">
+                                <h4>Readability Score</h4>
+                                <p>{{ result.analysis.readability }} / 100</p>
+                                <div class="progress">
+                                    {% if result.analysis.readability > 80 %}
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ result.analysis.readability }}%"></div>
+                                    {% elif result.analysis.readability > 50 %}
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ result.analysis.readability }}%"></div>
+                                    {% else %}
+                                        <div class="progress-bar bg-danger" role="progressbar" style="width: {{ result.analysis.readability }}%"></div>
+                                    {% endif %}
+                                </div>
+                                <small class="text-muted">
+                                    {% if result.analysis.readability > 80 %}
+                                        Easy to read
+                                    {% elif result.analysis.readability > 50 %}
+                                        Moderately difficult
+                                    {% else %}
+                                        Difficult to read
+                                    {% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Question Answering Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h3 class="mb-0">Ask Questions About the Text</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="questionForm">
+                            <div class="mb-3">
+                                <label for="question" class="form-label">Your Question:</label>
+                                <input type="text" class="form-control" id="question" placeholder="What is the main topic?">
+                                <input type="hidden" id="session_id" value="{{ session_id }}">
+                            </div>
+                            <button type="submit" class="btn btn-info">Ask</button>
+                        </form>
+                        
+                        <div id="answerContainer" class="mt-4" style="display: none;">
+                            <h4>Answer:</h4>
+                            <div id="answer" class="p-3 bg-light rounded"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Original Text Card -->
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Original Content</h3>
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" data-bs-target="#originalTextCollapse">
+                            Show/Hide
+                        </button>
+                    </div>
+                    <div class="collapse" id="originalTextCollapse">
+                        <div class="card-body">
+                            <pre class="original-text" style="white-space: pre-wrap;">{{ result.original_text }}</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Question answering functionality
+        document.getElementById('questionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const question = document.getElementById('question').value;
+            const sessionId = document.getElementById('session_id').value;
+            
+            if (!question.trim()) {
+                alert('Please enter a question');
+                return;
+            }
+            
+            // Show loading state
+            const answerContainer = document.getElementById('answerContainer');
+            const answerElement = document.getElementById('answer');
+            answerContainer.style.display = 'block';
+            answerElement.innerHTML = 'Processing your question...';
+            
+            // Send question to server
+            fetch(`/ask_question/${sessionId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `question=${encodeURIComponent(question)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    answerElement.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+                } else {
+                    answerElement.textContent = data.answer;
+                }
+            })
+            .catch(error => {
+                answerElement.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            });
+        });
+    </script>

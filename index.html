@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Text Summarizer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            background-color: #f8f9fa;
+        }
+        .header-container {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            border-radius: 0.5rem;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .model-card {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .model-card:hover {
+            transform: translateY(-5px);
+        }
+        .model-card.selected {
+            border: 2px solid #0d6efd;
+        }
+        .upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            transition: background-color 0.2s;
+        }
+        .upload-area:hover {
+            background-color: #f1f3f5;
+        }
+        .tab-content {
+            padding: 1.5rem;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 0.5rem 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container text-center">
+            <h1>Advanced Text Summarizer</h1>
+            <p class="lead">Powerful NLP-based text analysis and summarization</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <form action="/summarize" method="post" enctype="multipart/form-data">
+                    <!-- Model Selection -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="mb-0">Step 1: Choose a Summarization Model</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <div class="card model-card" onclick="selectModel('t5-small')">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">T5-Small</h5>
+                                            <p class="card-text">Fast processing, good for quick summaries</p>
+                                            <span class="badge bg-success">Speed: Fast</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card model-card" onclick="selectModel('bart-large')">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">BART-Large</h5>
+                                            <p class="card-text">High-quality summaries, balanced performance</p>
+                                            <span class="badge bg-warning">Speed: Medium</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card model-card" onclick="selectModel('distilbart')">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">DistilBART</h5>
+                                            <p class="card-text">Faster than BART with comparable quality</p>
+                                            <span class="badge bg-info">Speed: Medium-Fast</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card model-card" onclick="selectModel('pegasus')">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">PEGASUS</h5>
+                                            <p class="card-text">Specialized for news-like content</p>
+                                            <span class="badge bg-warning">Speed: Medium</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <div class="card model-card" onclick="selectModel('t5-3b')">
+                                        <div class="card-body text-center">
+                                            <h5 class="card-title">T5-3B</h5>
+                                            <p class="card-text">Highest quality but requires significant resources</p>
+                                            <span class="badge bg-danger">Speed: Slow</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="model_choice" name="model_choice" value="bart-large">
+                        </div>
+                    </div>
+
+                    <!-- Input Selection -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-success text-white">
+                            <h3 class="mb-0">Step 2: Provide Input</h3>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="inputTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="text-tab" data-bs-toggle="tab" data-bs-target="#text" type="button" role="tab">Text</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="file-tab" data-bs-toggle="tab" data-bs-target="#file" type="button" role="tab">Text File</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="pdf-tab" data-bs-toggle="tab" data-bs-target="#pdf" type="button" role="tab">PDF</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="image-tab" data-bs-toggle="tab" data-bs-target="#image" type="button" role="tab">Image</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="audio-tab" data-bs-toggle="tab" data-bs-target="#audio" type="button" role="tab">Audio</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="video-tab" data-bs-toggle="tab" data-bs-target="#video" type="button" role="tab">Video</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="inputTabsContent">
+                                <div class="tab-pane fade show active" id="text" role="tabpanel">
+                                    <div class="mb-3">
+                                        <label for="text_input" class="form-label">Enter your text:</label>
+                                        <textarea class="form-control" id="text_input" name="text_input" rows="10" placeholder="Paste your text here..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="file" role="tabpanel">
+                                    <div class="upload-area">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-file-text mb-3" viewBox="0 0 16 16">
+                                            <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z"/>
+                                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z"/>
+                                        </svg>
+                                        <h5>Upload a Text File</h5>
+                                        <p>Drag and drop a .txt file or click to browse</p>
+                                        <input type="file" class="form-control" id="file_input" name="file_input" accept=".txt">
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="pdf" role="tabpanel">
+                                    <div class="upload-area">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-file-pdf mb-3" viewBox="0 0 16 16">
+                                            <path d="M5.523 12.424c.14-.082.293-.162.459-.238a7.878 7.878 0 0 1-.45.606c-.28.337-.498.516-.635.572a.266.266 0 0 1-.035.012.282.282 0 0 1-.026-.044c-.056-.11-.054-.216.04-.36.106-.165.319-.354.647-.548zm2.455-1.647c-.119.025-.237.05-.356.078a21.148 21.148 0 0 0 .5-1.05 12.045 12.045 0 0 0 .51.858c-.217.032-.436.07-.654.114zm2.525.939a3.881 3.881 0 0 1-.435-.41c.228.005.434.022.612.054.317.057.466.147.518.209a.095.095 0 0 1 .026.064.436.436 0 0 1-.06.2.307.307 0 0 1-.094.124.107.107 0 0 1-.069.015c-.09-.003-.258-.066-.498-.256zM8.278 6.97c-.04.244-.108.524-.2.829a4.86 4.86 0 0 1-.089-.346c-.076-.353-.087-.63-.046-.822.038-.177.11-.248.196-.283a.517.517 0 0 1 .145-.04c.013.03.028.092.032.198.005.122-.007.277-.038.465z"/>
+                                            <path fill-rule="evenodd" d="M4 0h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2zm0 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H4z"/>
+                                            <path d="M4.603 12.087a.81.81 0 0 1-.438-.42c-.195-.388-.13-.776.08-1.102.198-.307.526-.568.897-.787a7.68 7.68 0 0 1 1.482-.645 19.701 19.701 0 0 0 1.062-2.227 7.269 7.269 0 0 1-.43-1.295c-.086-.4-.119-.796-.046-1.136.075-.354.274-.672.65-.823.192-.077.4-.12.602-.077a.7.7 0 0 1 .477.365c.088.164.12.356.127.538.007.187-.012.395-.047.614-.084.51-.27 1.134-.52 1.794a10.954 10.954 0 0 0 .98 1.686 5.753 5.753 0 0 1 1.334.05c.364.065.734.195.96.465.12.144.193.32.2.518.007.192-.047.382-.138.563a1.04 1.04 0 0 1-.354.416.856.856 0 0 1-.51.138c-.331-.014-.654-.196-.933-.417a5.716 5.716 0 0 1-.911-.95 11.642 11.642 0 0 0-1.997.406 11.311 11.311 0 0 1-1.021 1.51c-.29.35-.608.655-.926.787a.793.793 0 0 1-.58.029zm1.379-1.901c-.166.076-.32.156-.459.238-.328.194-.541.383-.647.547-.094.145-.096.25-.04.361.01.022.02.036.026.044a.27.27 0 0 0 .035-.012c.137-.056.355-.235.635-.572a8.18 8.18 0 0 0 .45-.606zm1.64-1.33a12.647 12.647 0 0 1 1.01-.193 11.666 11.666 0 0 1-.51-.858 20.741 20.741 0 0 1-.5 1.05zm2.446.45c.15.162.296.3.435.41.24.19.407.253.498.256a.107.107 0 0 0 .07-.015.307.307 0 0 0 .094-.125.436.436 0 0 0 .059-.2.095.095 0 0 0-.026-.063c-.052-.062-.2-.152-.518-.209a3.881 3.881 0 0 0-.612-.053zM8.078 7.8a6.7 6.7 0 0 0 .2-.828c.031-.188.043-.343.038-.465a2.338 2.338 0 0 0-.018-.64.517.517 0 0 0-.145.04c-.087.035-.158.106-.196.283-.04.192-.03.469.046.822.024.111.054.227.09.346z"/>
+                                        </svg>
+                                        <h5>Upload a PDF Document</h5>
+                                        <p>Drag and drop a PDF file or click to browse</p>
+                                        <input type="file" class="form-control" id="pdf_input" name="pdf_input" accept=".pdf">
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="image" role="tabpanel">
+                                    <div class="upload-area">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-image mb-3" viewBox="0 0 16 16">
+                                            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                                            <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z"/>
+                                        </svg>
+                                        <h5>Upload an Image</h5>
+                                        <p>Drag and drop an image file or click to browse</p>
+                                        <input type="file" class="form-control" id="image_input" name="image_input" accept="image/*">
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="audio" role="tabpanel">
+                                    <div class="upload-area">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-file-music mb-3" viewBox="0 0 16 16">
+                                            <path d="M10.304 5.698c-.022-.004-.041-.008-.063-.013l-.746-.196a.5.5 0 0 1-.373-.606l.2-.775a.5.5 0 0 1 .606-.373l.746.196c.22.004.04.008.062.013l.746.196a.5.5 0 0 1 .374.606l-.2.775a.5.5 0 0 1-.606.373l-.746-.196zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-.5.5h-4a.5.5 0 0 1-.5-.5V3.5z"/>
+                                            <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z"/>
+                                        </svg>
+                                        <h5>Upload an Audio File</h5>
+                                        <p>Drag and drop an audio file or click to browse</p>
+                                        <input type="file" class="form-control" id="audio_input" name="audio_input" accept="audio/*">
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="video" role="tabpanel">
+                                    <div class="upload-area">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-film mb-3" viewBox="0 0 16 16">
+                                            <path d="M0 1a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V1zm4 0v6h8V1H4zm8 8H4v6h8V9zM1 1v2h2V1H1zm2 3H1v2h2V4zM1 7v2h2V7H1zm2 3H1v2h2v-2zm-2 3v2h2v-2H1zM15 1h-2v2h2V1zm-2 3v2h2V4h-2zm2 3h-2v2h2V7zm-2 3v2h2v-2h-2zm2 3h-2v2h2v-2z"/>
+                                        </svg>
+                                        <h5>Upload a Video File</h5>
+                                        <p>Drag and drop a video file or click to browse</p>
+                                        <input type="file" class="form-control" id="video_input" name="video_input" accept="video/*">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Options -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-info text-white">
+                            <h3 class="mb-0">Step 3: Set Summary Options</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="max_words" class="form-label">Maximum Word Limit for Summary:</label>
+                                <input type="number" class="form-control" id="max_words" name="max_words" value="150" min="50" max="500">
+                                <div class="form-text">Recommended: 20-30% of original length</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" id="submitBtn" class="btn btn-primary btn-lg">Generate Summary</button>
+                        <div id="loadingIndicator" style="display: none;" class="text-center mt-3">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Processing your request. This may take a moment...</p>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Form submission handler to show loading indicator
+        document.querySelector('form').addEventListener('submit', function() {
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('loadingIndicator').style.display = 'block';
+        });
+        
+        function selectModel(model) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.model-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            event.currentTarget.classList.add('selected');
+            
+            // Update hidden input value
+            document.getElementById('model_choice').value = model;
+        }
+        
+        // Set default selected model
+        document.addEventListener('DOMContentLoaded', function() {
+            const defaultModel = document.getElementById('model_choice').value;
+            const cards = document.querySelectorAll('.model-card');
+            
+            // Find the card for the default model and select it
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                if (card.querySelector('.card-title').textContent.toLowerCase().includes(defaultModel.split('-')[0].toLowerCase())) {
+                    card.classList.add('selected');
+                    break;
+                }
+            }
+            
+            // Add active class to the selected input tab based on URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const inputType = urlParams.get('input_type');
+            if (inputType) {
+                const tabId = inputType + '-tab';
+                const tab = document.getElementById(tabId);
+                if (tab) {
+                    const tabTrigger = new bootstrap.Tab(tab);
+                    tabTrigger.show();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

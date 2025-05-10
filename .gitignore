@@ -1,0 +1,51 @@
+<<<<<<< HEAD
+
+---
+
+### `.gitignore`
+```txt
+# Ignore Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+env/
+
+# Ignore log files
+*.log
+
+# Ignore model and NLP downloads
+nltk_data/
+spacy_data/
+
+# Ignore generated output files
+summary_output.*
+=======
+
+---
+
+### `.gitignore`
+```txt
+# Ignore Python bytecode and cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+env/
+
+# Ignore log files
+*.log
+
+# Ignore model and NLP downloads
+nltk_data/
+spacy_data/
+
+# Ignore generated output files
+summary_output.*
+>>>>>>> 332449a7ae3ed30e52c34f172658560db2ded9b0
